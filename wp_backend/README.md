@@ -11,7 +11,7 @@ O WordPress será usado apenas como CMS/headless backend, responsável por:
 - cadastrar vídeos e destaques
 - servir dados para o Next.js
 
-## Estrutura sugerida
+## Estrutura
 
 - instalação WordPress limpa
 - tema mínimo só para backend, se necessário
