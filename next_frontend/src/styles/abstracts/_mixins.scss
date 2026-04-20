@@ -1,0 +1,27 @@
+@use './variables' as *;
+
+@mixin container {
+  width: min(calc(100% - 32px), $container);
+  margin-inline: auto;
+}
+
+@mixin section-space {
+  padding-block: 48px;
+}
+
+@mixin card-surface {
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  box-shadow: $shadow-soft;
+}
+
+@mixin hover-lift {
+  transition: transform $transition, box-shadow $transition, border-color $transition;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 42px rgba(36, 76, 90, 0.12);
+    border-color: rgba(36, 76, 90, 0.28);
+  }
+}
