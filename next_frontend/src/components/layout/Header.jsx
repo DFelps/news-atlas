@@ -1,4 +1,8 @@
+'use client';
+
+import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { siteConfig } from '@/lib/site';
 
 const navItems = [
@@ -11,6 +15,19 @@ const navItems = [
 ];
 
 export function Header() {
+  const router = useRouter();
+  const [query, setQuery] = useState('');
+
+  function handleSubmit(event) {
+    event.preventDefault();
+
+    const value = query.trim();
+
+    if (!value) return;
+
+    router.push(`/busca?q=${encodeURIComponent(value)}`);
+  }
+
   return (
     <header className="site-header">
       <div className="container site-header__inner">
@@ -30,9 +47,19 @@ export function Header() {
           ))}
         </nav>
 
-        <button className="search-button" type="button" aria-label="Buscar">
-          Buscar
-        </button>
+        <form className="search-form" onSubmit={handleSubmit} role="search">
+          <input
+            type="search"
+            name="q"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Buscar notícias..."
+            aria-label="Buscar notícias"
+          />
+          <button className="search-button" type="submit">
+            Buscar
+          </button>
+        </form>
       </div>
     </header>
   );

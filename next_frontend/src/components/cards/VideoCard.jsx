@@ -5,7 +5,13 @@ export function VideoCard({ post }) {
   return (
     <article className="video-card">
       <Link href={`/post/${post.slug}`} className="video-card__media">
-        <Image src={post.image} alt={post.title} fill sizes="(max-width: 768px) 100vw, 400px" />
+        <Image
+          src={post.image}
+          alt={post.title}
+          fill
+          sizes="(max-width: 768px) 100vw, 400px"
+          unoptimized
+        />
         <span className="video-card__play">▶</span>
       </Link>
 

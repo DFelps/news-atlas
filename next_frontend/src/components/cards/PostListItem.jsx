@@ -6,7 +6,13 @@ export function PostListItem({ post }) {
   return (
     <article className="post-list-item">
       <Link href={`/post/${post.slug}`} className="post-list-item__media">
-        <Image src={post.image} alt={post.title} fill sizes="(max-width: 768px) 100vw, 280px" />
+        <Image
+          src={post.image}
+          alt={post.title}
+          fill
+          sizes="(max-width: 768px) 100vw, 280px"
+          unoptimized
+        />
       </Link>
 
       <div className="post-list-item__content">

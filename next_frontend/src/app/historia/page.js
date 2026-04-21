@@ -29,9 +29,6 @@ export default function HistoriaPage() {
           No frontend, o foco fica em performance, previsibilidade de componentes, reaproveitamento visual e liberdade
           total para reproduzir e adaptar layouts inspirados em portais e revistas digitais.
         </p>
-        <blockquote>
-          Um projeto pequeno no escopo, mas com cara de produto sério.
-        </blockquote>
         <p>
           Essa base foi montada para ser o ponto de partida de um portal editorial modular, com home composta por seções,
           páginas de categoria enxutas, single minimalista e uma página institucional para dar contexto à marca.
