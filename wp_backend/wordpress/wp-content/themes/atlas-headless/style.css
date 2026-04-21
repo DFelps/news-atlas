@@ -1,0 +1,18 @@
+/*
+Theme Name: Atlas Headless
+Description: Tema mínimo para uso headless do Atlas Journal.
+Version: 0.1.0
+*/
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 40px;
+  color: #1f1f1f;
+}
+
+.atlas-admin-note {
+  max-width: 760px;
+  padding: 24px;
+  border: 1px solid #ddd;
+  background: #fff;
+}
