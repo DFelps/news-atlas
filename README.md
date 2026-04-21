@@ -4,21 +4,36 @@ Portal editorial moderno desenvolvido com **Next.js** no frontend e **WordPress 
 
 Este projeto foi pensado como uma arquitetura desacoplada, onde o WordPress gerencia conteúdo, categorias, mídia e publicação, enquanto o frontend em Next.js entrega performance, SEO e experiência moderna.
 
+---
+
+## Demonstração em vídeo
+
+Apresentação rápida do sistema (2 minutos):
+
+https://www.youtube.com/watch?v=JIvyoeyBwBo
+
+---
+
 ## Stack principal
 
 ### Frontend
+
 - Next.js
 - React
 - Sass (SCSS)
 - SSR / SSG / ISR
-- Consumo de API REST / WPGraphQL
+- Consumo de API REST / WordPress Headless
 
 ### Backend
+
 - WordPress
 - CMS para posts, páginas e categorias
 - Painel administrativo
 - Upload de mídia
 - Gestão editorial
+- API customizada para home
+
+---
 
 ## Estrutura do projeto
 
@@ -28,27 +43,60 @@ atlas-journal/
 └── wp_backend/      # WordPress como CMS / API
 ```
 
-## Funcionalidades previstas
+---
+
+## Funcionalidades implementadas
 
 - Home editorial modular
-- Destaques principais
+- Destaque principal
 - Últimas notícias
 - Sessão de vídeos
 - Blocos por categoria
 - Área de colunistas
-- Página de artigo
+- Página de artigo dinâmica
 - Página de categoria com paginação
+- Busca de posts
 - Página institucional
-- SEO otimizado
-- Integração Headless WordPress
+- Integração WordPress Headless
+- Consumo de endpoint customizado da home
+- Fallback de conteúdo e imagens
+
+---
+
+## Arquitetura
+
+O WordPress é responsável por:
+
+- cadastro de conteúdo
+- categorias
+- tags
+- páginas
+- publicação
+- gestão editorial
+
+O Next.js é responsável por:
+
+- renderização pública
+- performance
+- navegação moderna
+- SEO
+- experiência visual
+- cache e revalidate
+
+---
 
 ## Objetivo
 
-Demonstrar uma arquitetura moderna usando WordPress como backend de conteúdo e Next.js como camada de apresentação.
+Demonstrar uma arquitetura moderna utilizando **WordPress como backend de conteúdo** e **Next.js como camada de apresentação**, separando responsabilidades e aumentando performance.
+
+---
 
 ## Status
 
-Projeto em desenvolvimento.
+Projeto funcional  
+Integração real entre frontend e backend  
+
+---
 
 ## Licença
 
