@@ -4,32 +4,34 @@ import { getCategoryBySlug, getCategoryPosts } from '@/lib/data';
 import { siteConfig } from '@/lib/site';
 import { PostListItem } from '@/components/cards/PostListItem';
 
-export function generateMetadata({ params }) {
-  const category = getCategoryBySlug(params.slug);
+export async function generateMetadata({ params }) {
+  const category = await getCategoryBySlug(params.slug);
 
   if (!category) {
     return { title: `Categoria | ${siteConfig.name}` };
   }
 
   return {
-    title: `${category.name} | ${siteConfig.name}`
+    title: `${category.name} | ${siteConfig.name}`,
+    description: category.description || `Notícias da categoria ${category.name}`
   };
 }
 
-export default function CategoryPage({ params, searchParams }) {
-  const category = getCategoryBySlug(params.slug);
+export default async function CategoryPage({ params, searchParams }) {
+  const currentPage = Number(searchParams.page || 1);
+  const perPage = 10;
+
+  const { category, posts, totalPages } = await getCategoryPosts(
+    params.slug,
+    currentPage,
+    perPage
+  );
 
   if (!category) {
     notFound();
   }
 
-  const currentPage = Number(searchParams.page || 1);
-  const perPage = 10;
-  const posts = getCategoryPosts(params.slug);
-  const totalPages = Math.max(1, Math.ceil(posts.length / perPage));
   const safePage = Math.min(Math.max(currentPage, 1), totalPages);
-  const offset = (safePage - 1) * perPage;
-  const paginatedPosts = posts.slice(offset, offset + perPage);
 
   return (
     <section className="page-wrap">
@@ -40,7 +42,7 @@ export default function CategoryPage({ params, searchParams }) {
       </div>
 
       <div className="category-list">
-        {paginatedPosts.map((post) => (
+        {posts.map((post) => (
           <PostListItem key={post.id} post={post} />
         ))}
       </div>

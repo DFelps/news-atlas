@@ -6,7 +6,13 @@ export function PostCard({ post, compact = false }) {
   return (
     <article className={`post-card ${compact ? 'post-card--compact' : ''}`}>
       <Link href={`/post/${post.slug}`} className="post-card__media">
-        <Image src={post.image} alt={post.title} fill sizes="(max-width: 768px) 100vw, 400px" />
+        <Image
+          src={post.image}
+          alt={post.title}
+          fill
+          sizes="(max-width: 768px) 100vw, 400px"
+          unoptimized
+        />
       </Link>
 
       <div className="post-card__content">

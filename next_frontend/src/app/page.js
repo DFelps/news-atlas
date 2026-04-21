@@ -4,25 +4,41 @@ import { VideoSection } from '@/components/sections/VideoSection';
 import { FeatureCategorySection } from '@/components/sections/FeatureCategorySection';
 import { ColumnistsSection } from '@/components/sections/ColumnistsSection';
 import { SecondaryCategorySection } from '@/components/sections/SecondaryCategorySection';
-import { homeData } from '@/lib/data';
+import { getHomeData } from '@/lib/data';
 
-export default function HomePage() {
+export default async function HomePage() {
+  const homeData = await getHomeData();
+
   return (
     <>
-      <HeroSection featured={homeData.featured} trending={homeData.trending} />
-      <LatestNewsSection posts={homeData.latestNews} />
-      <VideoSection posts={homeData.videos} />
-      <FeatureCategorySection
-        title="Saúde e bem-estar"
-        description="Uma editoria leve, útil e com cara mais humana para quebrar o ritmo das manchetes mais duras."
-        featured={homeData.health.featured}
-        list={homeData.health.list}
-      />
-      <ColumnistsSection columnists={homeData.columnists} />
-      <SecondaryCategorySection
-        title="Brasil"
-        posts={homeData.brasil}
-      />
+      {homeData.featured && (
+        <HeroSection featured={homeData.featured} trending={homeData.trending || []} />
+      )}
+
+      {!!homeData.latestNews?.length && (
+        <LatestNewsSection posts={homeData.latestNews} />
+      )}
+
+      {!!homeData.videos?.length && (
+        <VideoSection posts={homeData.videos} />
+      )}
+
+      {homeData.health?.featured && (
+        <FeatureCategorySection
+          title="Saúde e bem-estar"
+          description="Uma editoria leve e útil"
+          featured={homeData.health.featured}
+          list={homeData.health.list || []}
+        />
+      )}
+
+      {!!homeData.columnists?.length && (
+        <ColumnistsSection columnists={homeData.columnists} />
+      )}
+
+      {!!homeData.brasil?.length && (
+        <SecondaryCategorySection title="Brasil" posts={homeData.brasil} />
+      )}
     </>
   );
 }

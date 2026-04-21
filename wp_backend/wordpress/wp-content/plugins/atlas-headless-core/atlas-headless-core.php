@@ -3,7 +3,7 @@
  * Plugin Name: Atlas Headless Core
  * Description: Recursos headless para o Atlas Journal: REST API, campos meta e endpoint de home.
  * Version: 0.1.0
- * Author: Atlas Journal
+ * Author: Daniel Siqueira
  */
 
 if (!defined('ABSPATH')) {

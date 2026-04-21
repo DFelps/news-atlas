@@ -5,7 +5,13 @@ export function ColumnistCard({ columnist }) {
   return (
     <article className="columnist-card">
       <div className="columnist-card__avatar">
-        <Image src={columnist.image} alt={columnist.name} fill sizes="96px" />
+        <Image
+          src={columnist.image}
+          alt={columnist.name}
+          fill
+          sizes="96px"
+          unoptimized
+        />
       </div>
       <h3>{columnist.name}</h3>
       <p>{columnist.role}</p>

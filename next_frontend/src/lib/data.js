@@ -1,255 +1,252 @@
-const categories = [
-  {
-    id: 1,
-    name: 'Brasil',
-    slug: 'brasil',
-    description: 'Cobertura nacional com foco em política, sociedade, cidades e movimentos do dia a dia.'
-  },
-  {
-    id: 2,
-    name: 'Saúde',
-    slug: 'saude',
-    description: 'Conteúdos de saúde pública, bem-estar, comportamento e informação útil.'
-  },
-  {
-    id: 3,
-    name: 'Vídeos',
-    slug: 'videos',
-    description: 'Entrevistas, coberturas rápidas e recortes de reportagens em formato audiovisual.'
-  },
-  {
-    id: 4,
-    name: 'Colunistas',
-    slug: 'colunistas',
-    description: 'Assinaturas fixas, análises, bastidores e textos autorais.'
+const WP_URL = process.env.NEXT_PUBLIC_WP_URL || 'http://localhost:9003';
+const API_BASE = `${WP_URL}/wp-json`;
+const HOME_ENDPOINT = `${API_BASE}/atlas/v1/home`;
+
+const PLACEHOLDER_IMAGE = `data:image/svg+xml;utf8,${encodeURIComponent(`
+  <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+    <rect width="1200" height="800" fill="#efe5d7"/>
+    <rect x="80" y="80" width="1040" height="640" rx="24" fill="#fffdf9" stroke="#dccfbe" stroke-width="2"/>
+    <text x="600" y="375" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="42" fill="#244c5a">
+      News Atlas
+    </text>
+    <text x="600" y="430" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" fill="#6f6258">
+      Imagem de demonstração
+    </text>
+  </svg>
+`)}`;
+
+function stripHtml(html = '') {
+  return html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+}
+
+function decodeHtmlEntities(text = '') {
+  if (typeof window !== 'undefined') {
+    const textarea = document.createElement('textarea');
+    textarea.innerHTML = text;
+    return textarea.value;
   }
-];
 
-const content = `
-  <p>Este é um conteúdo de demonstração pronto para ser substituído por dados do WordPress. A ideia aqui é validar estrutura, ritmo visual e organização editorial antes da integração definitiva com o CMS.</p>
-  <p>O layout foi pensado para manter leitura confortável, hierarquia clara e liberdade para acomodar tanto notícias rápidas quanto textos mais densos. Com Sass, a manutenção visual fica simples e o projeto passa a mostrar domínio de CSS mais artesanal.</p>
-  <p>No cenário final, cada bloco da home pode vir de categorias, tags, campos customizados ou regras editoriais simples, sem depender de um painel pesado ou de um tema WordPress engessado.</p>
-  <p>Essa abordagem separa bem as responsabilidades: o WordPress publica, organiza e entrega dados; o Next.js renderiza a experiência final com mais controle, performance e consistência visual.</p>
-`;
+  return text
+    .replace(/&#8217;/g, "'")
+    .replace(/&#8220;/g, '"')
+    .replace(/&#8221;/g, '"')
+    .replace(/&#8230;/g, '...')
+    .replace(/&#038;/g, '&')
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#039;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>');
+}
 
-const posts = [
-  {
-    id: 1,
-    title: 'Atlas Journal estreia com visual modular e clima de revista digital',
-    slug: 'atlas-journal-estreia-visual-modular',
-    excerpt: 'Um layout inspirado em portais editoriais clássicos, mas redesenhado com mais respiro e leitura moderna.',
-    image: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80',
-    date: '2026-04-20',
-    categorySlug: 'brasil',
-    categoryName: 'Brasil',
-    author: 'Redação Atlas',
-    content
-  },
-  {
-    id: 2,
-    title: 'Bastidores da produção: como um portal pequeno ganha cara de produto grande',
-    slug: 'bastidores-producao-portal-pequeno-produto-grande',
-    excerpt: 'Escopo controlado, blocos previsíveis e componentes consistentes fazem diferença no resultado final.',
-    image: 'https://images.unsplash.com/photo-1495020689067-958852a7765e?auto=format&fit=crop&w=1200&q=80',
-    date: '2026-04-18',
-    categorySlug: 'brasil',
-    categoryName: 'Brasil',
-    author: 'Marina Torres',
-    content
-  },
-  {
-    id: 3,
-    title: 'Saúde urbana: pequenas mudanças de rotina podem ter impacto real',
-    slug: 'saude-urbana-mudancas-rotina-impacto-real',
-    excerpt: 'Um bloco mais leve da home pode gerar contraste visual e ampliar o tempo de permanência.',
-    image: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80',
-    date: '2026-04-17',
-    categorySlug: 'saude',
-    categoryName: 'Saúde',
-    author: 'Helena Prado',
-    content
-  },
-  {
-    id: 4,
-    title: 'Vídeo: o que muda quando o WordPress vira apenas uma API editorial',
-    slug: 'video-wordpress-vira-api-editorial',
-    excerpt: 'Separar frontend e CMS dá mais previsibilidade para layout, deploy e organização do código.',
-    image: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=1200&q=80',
-    date: '2026-04-16',
-    categorySlug: 'videos',
-    categoryName: 'Vídeos',
-    author: 'Caio Mendes',
-    content
-  },
-  {
-    id: 5,
-    title: 'Coluna: design editorial ainda é o que mais dá cara de projeto premium',
-    slug: 'coluna-design-editorial-projeto-premium',
-    excerpt: 'Tipografia, grids e ritmo visual continuam sendo o que separa demo simples de demo memorável.',
-    image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80',
-    date: '2026-04-15',
-    categorySlug: 'colunistas',
-    categoryName: 'Colunistas',
-    author: 'Laura Meireles',
-    content
-  },
-  {
-    id: 6,
-    title: 'Mercado local testa formatos de notícia mais visuais e mais curtos',
-    slug: 'mercado-local-formatos-noticia-visuais-curtos',
-    excerpt: 'Portais enxutos vêm trocando excesso de widgets por blocos editoriais mais claros.',
-    image: 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&w=1200&q=80',
-    date: '2026-04-14',
-    categorySlug: 'brasil',
-    categoryName: 'Brasil',
-    author: 'Redação Atlas',
-    content
-  },
-  {
-    id: 7,
-    title: 'Bem-estar no trabalho: por que o conteúdo de serviço funciona tão bem',
-    slug: 'bem-estar-trabalho-conteudo-servico-funciona-bem',
-    excerpt: 'Uma editoria de utilidade pública ajuda a equilibrar o tom de um site editorial.',
-    image: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1200&q=80',
-    date: '2026-04-13',
-    categorySlug: 'saude',
-    categoryName: 'Saúde',
-    author: 'Helena Prado',
-    content
-  },
-  {
-    id: 8,
-    title: 'Vídeo: como pensar home modular sem transformar tudo em portal gigante',
-    slug: 'video-home-modular-sem-portal-gigante',
-    excerpt: 'A chave está em poucos padrões fortes, e não em dezenas de blocos únicos.',
-    image: 'https://images.unsplash.com/photo-1495567720989-cebdbdd97913?auto=format&fit=crop&w=1200&q=80',
-    date: '2026-04-12',
-    categorySlug: 'videos',
-    categoryName: 'Vídeos',
-    author: 'Caio Mendes',
-    content
-  },
-  {
-    id: 9,
-    title: 'Coluna: um bom card de post resolve metade da home',
-    slug: 'coluna-bom-card-post-resolve-metade-home',
-    excerpt: 'Quando o card funciona bem, o resto da composição fica mais rápido de montar.',
-    image: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=1200&q=80',
-    date: '2026-04-11',
-    categorySlug: 'colunistas',
-    categoryName: 'Colunistas',
-    author: 'Rafael Pires',
-    content
-  },
-  {
-    id: 10,
-    title: 'Cidades experimentam novas formas de informar sem poluir a leitura',
-    slug: 'cidades-experimentam-novas-formas-informar',
-    excerpt: 'Mais espaço em branco e menos ruído visual fazem diferença na percepção de qualidade.',
-    image: 'https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80',
-    date: '2026-04-10',
-    categorySlug: 'brasil',
-    categoryName: 'Brasil',
-    author: 'Marina Torres',
-    content
-  },
-  {
-    id: 11,
-    title: 'Saúde em pauta: conteúdo explicativo também pode parecer premium',
-    slug: 'saude-em-pauta-conteudo-explicativo-premium',
-    excerpt: 'Editorial leve não precisa parecer informal demais; o segredo está no acabamento.',
-    image: 'https://images.unsplash.com/photo-1511174511562-5f97f4f4d1a5?auto=format&fit=crop&w=1200&q=80',
-    date: '2026-04-09',
-    categorySlug: 'saude',
-    categoryName: 'Saúde',
-    author: 'Helena Prado',
-    content
-  },
-  {
-    id: 12,
-    title: 'Vídeo: uma stack pequena pode entregar percepção de projeto completo',
-    slug: 'video-stack-pequena-projeto-completo',
-    excerpt: 'Bons blocos, boa tipografia e um fluxo headless bem definido já resolvem muita coisa.',
-    image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1200&q=80',
-    date: '2026-04-08',
-    categorySlug: 'videos',
-    categoryName: 'Vídeos',
-    author: 'Caio Mendes',
-    content
-  },
-  {
-    id: 13,
-    title: 'Coluna: fazer na mão o CSS certo pode valorizar muito a entrega',
-    slug: 'coluna-css-na-mao-valoriza-entrega',
-    excerpt: 'Sass bem organizado mostra domínio técnico e melhora a leitura do repositório.',
-    image: 'https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&w=1200&q=80',
-    date: '2026-04-07',
-    categorySlug: 'colunistas',
-    categoryName: 'Colunistas',
-    author: 'Laura Meireles',
-    content
-  },
-  {
-    id: 14,
-    title: 'Brasil em foco: coberturas regionais ganham mais espaço em projetos independentes',
-    slug: 'brasil-em-foco-coberturas-regionais',
-    excerpt: 'Portais menores têm aproveitado melhor recortes locais e narrativas mais próximas do leitor.',
-    image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80',
-    date: '2026-04-06',
-    categorySlug: 'brasil',
-    categoryName: 'Brasil',
-    author: 'Redação Atlas',
-    content
+function resolveImage(image) {
+  if (!image) return PLACEHOLDER_IMAGE;
+  return image;
+}
+
+function normalizeCustomPost(post) {
+  if (!post) return null;
+
+  return {
+    id: post.id,
+    slug: post.slug,
+    title: decodeHtmlEntities(post.title || ''),
+    excerpt: decodeHtmlEntities(post.excerpt || ''),
+    content: post.content || '',
+    image: resolveImage(post.featured_image),
+    date: post.date,
+    modified: post.modified,
+    link: post.link,
+    categoryId: post.category?.id ?? null,
+    categorySlug: post.category?.slug ?? '',
+    categoryName: post.category?.name ?? '',
+    author: post.author?.name ?? 'Redação',
+    authorSlug: post.author?.slug ?? '',
+    authorAvatar: resolveImage(post.author?.avatar),
+    authorBio: post.author?.bio ?? '',
+    readingTime: post.reading_time ?? null,
+    videoUrl: post.video_url ?? null
+  };
+}
+
+function normalizeWpPost(post) {
+  const featuredMedia = post?._embedded?.['wp:featuredmedia']?.[0];
+  const author = post?._embedded?.author?.[0];
+  const primaryCategory = post?._embedded?.['wp:term']?.[0]?.[0];
+
+  return {
+    id: post.id,
+    slug: post.slug,
+    title: decodeHtmlEntities(post.title?.rendered || ''),
+    excerpt: decodeHtmlEntities(stripHtml(post.excerpt?.rendered || '')),
+    content: post.content?.rendered || '',
+    image: resolveImage(featuredMedia?.source_url),
+    date: post.date,
+    modified: post.modified,
+    link: post.link,
+    categoryId: primaryCategory?.id ?? null,
+    categorySlug: primaryCategory?.slug ?? '',
+    categoryName: primaryCategory?.name ?? '',
+    author: author?.name ?? 'Redação',
+    authorSlug: author?.slug ?? '',
+    authorAvatar: resolveImage(author?.avatar_urls?.['96']),
+    authorBio: author?.description ?? '',
+    readingTime: null,
+    videoUrl: null
+  };
+}
+
+function normalizeCategory(category) {
+  if (!category) return null;
+
+  return {
+    id: category.id,
+    name: decodeHtmlEntities(category.name || ''),
+    slug: category.slug,
+    description: decodeHtmlEntities(category.description || '')
+  };
+}
+
+async function fetchJson(url, options = {}) {
+  const response = await fetch(url, {
+    next: { revalidate: 60 },
+    ...options
+  });
+
+  if (!response.ok) {
+    throw new Error(`Erro ao buscar ${url}: ${response.status}`);
   }
-];
 
-export const homeData = {
-  featured: posts[0],
-  trending: [posts[1], posts[2], posts[3], posts[4]],
-  latestNews: [posts[5], posts[6], posts[9], posts[10]],
-  videos: [posts[3], posts[7], posts[11]],
-  health: {
-    featured: posts[2],
-    list: [posts[6], posts[10], posts[1], posts[8]]
-  },
-  columnists: [
-    {
-      id: 1,
-      name: 'Laura Meireles',
-      role: 'Design e mídia digital',
-      image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=400&q=80',
-      post: posts[4]
-    },
-    {
-      id: 2,
-      name: 'Rafael Pires',
-      role: 'Produto e conteúdo',
-      image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80',
-      post: posts[8]
-    },
-    {
-      id: 3,
-      name: 'Helena Prado',
-      role: 'Saúde e comportamento',
-      image: 'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=400&q=80',
-      post: posts[2]
+  return response.json();
+}
+
+async function fetchWpPosts(url) {
+  const response = await fetch(url, {
+    next: { revalidate: 60 }
+  });
+
+  if (!response.ok) {
+    throw new Error(`Erro ao buscar ${url}: ${response.status}`);
+  }
+
+  const posts = await response.json();
+  const totalPages = Number(response.headers.get('X-WP-TotalPages') || 1);
+  const total = Number(response.headers.get('X-WP-Total') || posts.length || 0);
+
+  return {
+    posts: posts.map(normalizeWpPost),
+    totalPages,
+    total
+  };
+}
+
+export async function getHomeData() {
+  const home = await fetchJson(HOME_ENDPOINT);
+
+  const featured = normalizeCustomPost(home?.sections?.featured);
+  const latest = (home?.sections?.latest || []).map(normalizeCustomPost);
+  const videos = (home?.sections?.videos || []).map(normalizeCustomPost);
+  const funPosts = (home?.sections?.fun_category?.posts || []).map(normalizeCustomPost);
+  const brazil = (home?.sections?.brazil?.posts || []).map(normalizeCustomPost);
+
+  let columnists = (home?.sections?.columnists || []).map((columnist, index) => ({
+    id: columnist.id || index + 1,
+    name: columnist.name || columnist.post?.author?.name || 'Colunista',
+    role: columnist.role || columnist.post?.category?.name || 'Colunista',
+    image: resolveImage(columnist.image || columnist.post?.author?.avatar),
+    post: normalizeCustomPost(columnist.post)
+  }));
+
+  if (!columnists.length) {
+    const columnistCategory = await getCategoryPosts('colunistas', 1, 3).catch(() => null);
+
+    if (columnistCategory?.posts?.length) {
+      columnists = columnistCategory.posts.map((post) => ({
+        id: post.id,
+        name: post.author || 'Colunista',
+        role: post.categoryName || 'Colunista',
+        image: post.authorAvatar || PLACEHOLDER_IMAGE,
+        post
+      }));
     }
-  ],
-  brasil: [posts[0], posts[5], posts[9], posts[13]]
-};
+  }
 
-export function getCategoryBySlug(slug) {
-  return categories.find((category) => category.slug === slug);
+  return {
+    site: home?.site ?? null,
+    featured,
+    trending: latest.slice(1, 5),
+    latestNews: latest.slice(0, 4),
+    videos,
+    health: {
+      featured: funPosts[0] || null,
+      list: funPosts.slice(1, 5)
+    },
+    columnists,
+    brasil: brazil
+  };
 }
 
-export function getCategoryPosts(slug) {
-  return posts.filter((post) => post.categorySlug === slug);
+export async function getPostBySlug(slug) {
+  const posts = await fetchJson(
+    `${API_BASE}/wp/v2/posts?slug=${encodeURIComponent(slug)}&_embed`
+  );
+
+  if (!posts.length) return null;
+
+  return normalizeWpPost(posts[0]);
 }
 
-export function getPostBySlug(slug) {
-  return posts.find((post) => post.slug === slug);
+export async function getCategoryBySlug(slug) {
+  const categories = await fetchJson(
+    `${API_BASE}/wp/v2/categories?slug=${encodeURIComponent(slug)}`
+  );
+
+  if (!categories.length) return null;
+
+  return normalizeCategory(categories[0]);
 }
 
-export function getAllPosts() {
-  return posts;
+export async function getCategoryPosts(slug, page = 1, perPage = 10) {
+  const category = await getCategoryBySlug(slug);
+
+  if (!category) {
+    return {
+      category: null,
+      posts: [],
+      totalPages: 1,
+      total: 0
+    };
+  }
+
+  const { posts, totalPages, total } = await fetchWpPosts(
+    `${API_BASE}/wp/v2/posts?categories=${category.id}&page=${page}&per_page=${perPage}&_embed`
+  );
+
+  return {
+    category,
+    posts,
+    totalPages,
+    total
+  };
 }
+
+export async function getAllPosts(page = 1, perPage = 10) {
+  return fetchWpPosts(`${API_BASE}/wp/v2/posts?page=${page}&per_page=${perPage}&_embed`);
+}
+
+export async function searchPosts(query, page = 1, perPage = 10) {
+  const value = query?.trim();
+
+  if (!value) {
+    return {
+      posts: [],
+      totalPages: 1,
+      total: 0
+    };
+  }
+
+  return fetchWpPosts(
+    `${API_BASE}/wp/v2/posts?search=${encodeURIComponent(value)}&page=${page}&per_page=${perPage}&_embed`
+  );
+}
+
