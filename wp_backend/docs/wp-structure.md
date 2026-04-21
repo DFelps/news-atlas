@@ -161,12 +161,3 @@ news-atlas/
 Projeto funcional em integração real entre Next.js + WordPress Headless.
 
 ---
-
-## Próximos Passos
-
-- screenshots para README
-- refinamento visual
-- SEO avançado
-- webhook de revalidate
-- deploy produção
-- cache Redis / CDN
